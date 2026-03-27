@@ -1,25 +1,41 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./auth/Login.jsx";
-import Register from "./auth/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Register from "./auth/Register.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const token = localStorage.getItem("token");
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </Router>
+    <Routes>
+      {/* Public Routes */}
+      <Route
+        path="/login"
+        element={!token ? <Login /> : <Navigate to="/dashboard" />}
+      />
+      <Route
+        path="/register"
+        element={!token ? <Register /> : <Navigate to="/dashboard" />}
+      />
+
+      {/* Protected Routes */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Fallback for unknown routes */}
+      <Route
+        path="*"
+        element={<Navigate to={token ? "/dashboard" : "/login"} />}
+      />
+    </Routes>
   );
 }
 
