@@ -1,7 +1,7 @@
 {
-  "name": "sweet-shop-backend",
+  "name": "ACT-Core-Tech",
   "version": "1.0.0",
-  "description": "Sweet Shop Management System Backend",
+  "description": "full-stack",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
