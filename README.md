@@ -26,24 +26,8 @@ A professional, high-performance Full Stack Web Application built using the **ME
 - JSON Web Token (Security)
 - Bcrypt.js (Password Hashing)
 
----
-
-## 📁 Project Structure
 
 
-project-root/
-├── client/ # React Frontend
-│ ├── src/
-│ │ ├── components/ # Reusable UI Components
-│ │ ├── pages/ # Dashboard, Login, etc.
-│ │ └── App.js # Routing Logic
-├── server/ # Node.js Backend
-│ ├── controllers/ # Business Logic
-│ ├── models/ # MongoDB Schemas
-│ ├── routes/ # API Endpoints
-│ ├── middleware/ # JWT Auth Middleware
-│ └── server.js # Entry Point
-└── README.md
 
 
 ---
@@ -56,8 +40,9 @@ project-root/
 git clone <your-repo-link>
 cd <project-folder>
 2. Backend Setup
-cd server
+cd backend
 npm install
+npm run dev
 
 Create a .env file in the server folder:
 
@@ -69,29 +54,6 @@ Run Backend:
 
 npm start
 3. Frontend Setup
-cd client
+cd frontend
 npm install
-npm start
-📝 Evaluation Requirements Met
- Functionality: Robust Login & CRUD system.
- UI/UX: High-end design with responsive layouts.
- Code Quality: Organized folder structure and clean code practices.
- Bonus: Implemented Update (Edit) logic and professional Toast notifications.
-👨‍💻 Developed By
-
-Nishant Choudhary – Full Stack Developer
-[Your GitHub Profile Link]
-
-Final Checklist (Last Minute Tips):
-Repo Public Rakho: Make sure GitHub repository Public for evaluators to access.
-Screenshots: Add a Dashboard screenshot in README for higher impact.
-Env Variables: Add MONGO_URI and JWT_SECRET in Vercel/Render when deploying.
-
-All the best, Nishant! You’ve built a professional, deploy-ready project. 👍
-
-
----
-
-If you want, I can also **write the fixed `Lead.js` and `leadController.js` files inside this same editor block** so you can copy everything at once—backend fully ready to run without errors.  
-
-Do you want me to do that?
+npm run dev
