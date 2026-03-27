@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, LogIn, ArrowRight, Sparkles } from "lucide-react";
+// 1. Constant ko import karein
+import { AUTH_API_END_POINT } from "../utils/constant";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,7 +15,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      // 2. URL ki jagah AUTH_API_END_POINT use karein
+      const res = await fetch(`${AUTH_API_END_POINT}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -23,7 +26,6 @@ const Login = () => {
 
       if (data.token) {
         localStorage.setItem("token", data.token);
-        // Backend se username bhi bhej rahe hain dashboard par dikhane ke liye
         localStorage.setItem("username", data.username);
         navigate("/dashboard");
       } else {
@@ -39,12 +41,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F2F2F7] p-6 font-sans overflow-hidden">
-      {/* Dynamic Background Blurs */}
+      {/* Background Decor */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-indigo-200 rounded-full blur-[120px] opacity-40 animate-pulse" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[30rem] h-[30rem] bg-blue-100 rounded-full blur-[150px] opacity-50" />
 
       <div className="relative w-full max-w-[420px] bg-white/70 backdrop-blur-2xl border border-white/50 rounded-[3rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.08)] p-12">
-        {/* Logo/Icon Area */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-tr from-indigo-600 to-indigo-400 rounded-[2rem] shadow-2xl shadow-indigo-200 mb-6">
             <LogIn className="text-white w-10 h-10 ml-1" />
@@ -59,7 +60,6 @@ const Login = () => {
         </div>
 
         <form className="space-y-5" onSubmit={handleLogin}>
-          {/* Email Input */}
           <div className="relative group">
             <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 w-5 h-5 transition-colors" />
             <input
@@ -72,7 +72,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Password Input */}
           <div className="relative group">
             <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 w-5 h-5 transition-colors" />
             <input
@@ -85,7 +84,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Forgot Password Link (Optional UI touch) */}
           <div className="text-right px-2">
             <button
               type="button"
@@ -94,7 +92,6 @@ const Login = () => {
             </button>
           </div>
 
-          {/* Login Button */}
           <button
             disabled={loading}
             className="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-bold shadow-2xl shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.97] disabled:opacity-70 transition-all flex items-center justify-center space-x-3 mt-8">

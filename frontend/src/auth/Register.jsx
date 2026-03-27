@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { User, Mail, Lock, ShieldCheck, ArrowRight } from "lucide-react";
+import { AUTH_API_END_POINT } from "../utils/constant";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Register = () => {
 
     try {
       // Backend integration logic
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch(`${AUTH_API_END_POINT}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
