@@ -18,11 +18,15 @@ app.use(express.json()); // Parse JSON request body
 
 // Routes
 app.use("/api/auth", authRoutes);
+import leadRoutes from "./routes/leadRoutes.js";
 
+// ... baki setup
+app.use("/api/leads", leadRoutes);
 // Test root route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
 
 
 // Error handling middleware
