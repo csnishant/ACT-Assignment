@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Mail, Lock, LogIn, ArrowRight, Sparkles } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -19,59 +22,97 @@ const Login = () => {
       const data = await res.json();
 
       if (data.token) {
-        // Store token and role
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role);
-
-        // Redirect based on role
-        if (data.role === "admin") {
-          navigate("/admin"); // ✅ Admin dashboard
-        } else {
-          navigate("/"); // Normal user dashboard
-        }
+        // Backend se username bhi bhej rahe hain dashboard par dikhane ke liye
+        localStorage.setItem("username", data.username);
+        navigate("/dashboard");
       } else {
         alert(data.message || "Login failed");
       }
     } catch (err) {
       console.error(err);
       alert("Server error!");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 space-y-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-[#F2F2F7] p-6 font-sans overflow-hidden">
+      {/* Dynamic Background Blurs */}
+      <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-indigo-200 rounded-full blur-[120px] opacity-40 animate-pulse" />
+      <div className="absolute bottom-[-10%] left-[-5%] w-[30rem] h-[30rem] bg-blue-100 rounded-full blur-[150px] opacity-50" />
 
-        <form className="space-y-4" onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+      <div className="relative w-full max-w-[420px] bg-white/70 backdrop-blur-2xl border border-white/50 rounded-[3rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.08)] p-12">
+        {/* Logo/Icon Area */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-tr from-indigo-600 to-indigo-400 rounded-[2rem] shadow-2xl shadow-indigo-200 mb-6">
+            <LogIn className="text-white w-10 h-10 ml-1" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Welcome Back
+          </h2>
+          <p className="text-gray-500 text-sm mt-2 font-medium italic flex items-center justify-center gap-1">
+            <Sparkles className="w-4 h-4 text-indigo-400" />
+            Enter your credentials to continue
+          </p>
+        </div>
 
-          <button className="w-full bg-indigo-500 text-white py-3 rounded-2xl font-medium hover:bg-indigo-600 transition">
-            Login
+        <form className="space-y-5" onSubmit={handleLogin}>
+          {/* Email Input */}
+          <div className="relative group">
+            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 w-5 h-5 transition-colors" />
+            <input
+              type="email"
+              placeholder="Email address"
+              className="w-full pl-14 pr-5 py-5 bg-white/50 border border-gray-100 rounded-[1.5rem] focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all text-gray-800 placeholder:text-gray-400 font-medium"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Password Input */}
+          <div className="relative group">
+            <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 w-5 h-5 transition-colors" />
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full pl-14 pr-5 py-5 bg-white/50 border border-gray-100 rounded-[1.5rem] focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all text-gray-800 placeholder:text-gray-400 font-medium"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Forgot Password Link (Optional UI touch) */}
+          <div className="text-right px-2">
+            <button
+              type="button"
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+              Forgot Password?
+            </button>
+          </div>
+
+          {/* Login Button */}
+          <button
+            disabled={loading}
+            className="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-bold shadow-2xl shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.97] disabled:opacity-70 transition-all flex items-center justify-center space-x-3 mt-8">
+            <span>{loading ? "Authenticating..." : "Sign In"}</span>
+            {!loading && <ArrowRight className="w-5 h-5" />}
           </button>
         </form>
 
-        <p className="text-center text-gray-500">
-          Don’t have an account?{" "}
-          <Link to="/register" className="text-indigo-500 font-semibold">
-            Register
-          </Link>
-        </p>
+        <div className="mt-10 text-center">
+          <p className="text-gray-500 text-sm font-medium">
+            New here?{" "}
+            <Link
+              to="/register"
+              className="text-indigo-600 font-bold hover:text-indigo-800 transition-all underline-offset-4 hover:underline">
+              Create an account
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+
 // Error handling middleware
 app.use(errorHandler);
 

@@ -6,19 +6,11 @@ import Register from "./auth/Register.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const token = localStorage.getItem("token");
-
   return (
     <Routes>
       {/* Public Routes */}
-      <Route
-        path="/login"
-        element={!token ? <Login /> : <Navigate to="/dashboard" />}
-      />
-      <Route
-        path="/register"
-        element={!token ? <Register /> : <Navigate to="/dashboard" />}
-      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
       {/* Protected Routes */}
       <Route
@@ -30,11 +22,8 @@ function App() {
         }
       />
 
-      {/* Fallback for unknown routes */}
-      <Route
-        path="*"
-        element={<Navigate to={token ? "/dashboard" : "/login"} />}
-      />
+      {/* Fallback - Ye automatically handle karega logic */}
+      <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );
 }

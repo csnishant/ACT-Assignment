@@ -1,12 +1,25 @@
 // src/components/ProtectedRoute.jsx
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token"); // token must exist
-  if (!token) {
-    return <Navigate to="/login" />;
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login", { replace: true });
+    } else {
+      setLoading(false);
+    }
+  }, [navigate]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Or spinner
   }
+
   return children;
 };
 
