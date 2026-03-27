@@ -1,36 +1,31 @@
-import User from "../models/user.js";
+import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 
-// Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "1d", // Token valid for 1 day
+// JWT token generator
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET || "secret123", {
+    expiresIn: "1d", // 1 day
   });
 };
 
-// @desc    Register a new user
+// @desc    Register new user
 // @route   POST /api/auth/register
 // @access  Public
-export const registerUser = async (req, res, next) => {
+export const registerUser = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
 
     // Validate role
     const allowedRoles = ["user", "admin"];
-    const userRole = allowedRoles.includes(role) ? role : "user"; // default to "user"
-
-    // Debug log
-    console.log("Register request body:", req.body);
+    const userRole = allowedRoles.includes(role) ? role : "user";
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      console.log("User already exists:", email);
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create user with role
+    // Create user (password will auto-hash in model)
     const user = await User.create({
       username,
       email,
@@ -38,49 +33,46 @@ export const registerUser = async (req, res, next) => {
       role: userRole,
     });
 
-    console.log("User created:", user);
-
+    // Respond with user data + token
     res.status(201).json({
       _id: user._id,
       username: user.username,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token: generateToken(user._id, user.role),
     });
   } catch (error) {
-    console.log("Error in registerUser:", error);
-    next(error);
+    console.error("Error in registerUser:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-export const loginUser = async (req, res, next) => {
+export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-console.log("Login request body:", req.body);
 
-    // Find user
+    // Find user by email
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    // Verify password
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch)
       return res.status(401).json({ message: "Invalid credentials" });
-    }
 
+    // Respond with user data + token
     res.json({
       _id: user._id,
       username: user.username,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token: generateToken(user._id, user.role),
     });
   } catch (error) {
-    next(error);
+    console.error("Error in loginUser:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
