@@ -15,6 +15,7 @@ import {
   Search,
   Menu,
 } from "lucide-react";
+import { LEADS_API_END_POINT } from "../utils/constant";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -33,13 +34,16 @@ const Dashboard = () => {
   });
 
   const API_URL = "http://localhost:5000/api/leads";
+
   const token = localStorage.getItem("token");
 
+  // --- FETCH DATA ---
   // --- FETCH DATA ---
   const fetchLeads = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(API_URL, {
+      const res = await axios.get(LEADS_API_END_POINT, {
+        // Yahan replace hua
         headers: { Authorization: `Bearer ${token}` },
       });
       setLeads(res.data.data);
@@ -51,13 +55,6 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    if (!token) return navigate("/login");
-    const storedName = localStorage.getItem("username");
-    if (storedName) setUsername(storedName);
-    fetchLeads();
-  }, []);
-
   // --- ADD or UPDATE Lead ---
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,14 +62,20 @@ const Dashboard = () => {
     try {
       if (editingId) {
         // UPDATE Logic
-        const res = await axios.put(`${API_URL}/${editingId}`, formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.put(
+          `${LEADS_API_END_POINT}/${editingId}`,
+          formData,
+          {
+            // Yahan replace hua
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
         setLeads(leads.map((l) => (l._id === editingId ? res.data.data : l)));
         toast.success("Lead Updated!", { id: loadingToast });
       } else {
         // CREATE Logic
-        const res = await axios.post(API_URL, formData, {
+        const res = await axios.post(LEADS_API_END_POINT, formData, {
+          // Yahan replace hua
           headers: { Authorization: `Bearer ${token}` },
         });
         setLeads([...leads, res.data.data]);
@@ -88,7 +91,8 @@ const Dashboard = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      await axios.delete(`${API_URL}/${id}`, {
+      await axios.delete(`${LEADS_API_END_POINT}/${id}`, {
+        // Yahan replace hua
         headers: { Authorization: `Bearer ${token}` },
       });
       setLeads(leads.filter((l) => l._id !== id));
